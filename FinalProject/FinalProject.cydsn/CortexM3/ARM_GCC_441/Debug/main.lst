@@ -1,0 +1,1838 @@
+ARM GAS  C:\Users\Chrispy\AppData\Local\Temp\cci7J7Xo.s 			page 1
+
+
+   1              		.syntax unified
+   2              		.cpu cortex-m3
+   3              		.fpu softvfp
+   4              		.eabi_attribute 20, 1
+   5              		.eabi_attribute 21, 1
+   6              		.eabi_attribute 23, 3
+   7              		.eabi_attribute 24, 1
+   8              		.eabi_attribute 25, 1
+   9              		.eabi_attribute 26, 1
+  10              		.eabi_attribute 30, 6
+  11              		.eabi_attribute 18, 4
+  12              		.thumb
+  13              		.file	"main.c"
+  14              		.section	.debug_abbrev,"",%progbits
+  15              	.Ldebug_abbrev0:
+  16              		.section	.debug_info,"",%progbits
+  17              	.Ldebug_info0:
+  18              		.section	.debug_line,"",%progbits
+  19              	.Ldebug_line0:
+  20 0000 0B010000 		.text
+  20      02005300 
+  20      00000201 
+  20      FB0E0D00 
+  20      01010101 
+  21              	.Ltext0:
+  22              		.cfi_sections	.debug_frame
+  23              		.comm	counts,8,4
+  24              		.global	chan
+  25              		.bss
+  26              		.type	chan, %object
+  27              		.size	chan, 1
+  28              	chan:
+  29 0000 00       		.space	1
+  30              		.comm	sample,1,1
+  31              		.section	.text.main,"ax",%progbits
+  32              		.align	2
+  33              		.global	main
+  34              		.thumb
+  35              		.thumb_func
+  36              		.type	main, %function
+  37              	main:
+  38              	.LFB29:
+  39              		.file 1 ".\\main.c"
+   1:.\main.c      **** #include <device.h>
+   2:.\main.c      **** #include <string.h>
+   3:.\main.c      **** #include <math.h>
+   4:.\main.c      **** 
+   5:.\main.c      **** #define PI 3.14159265359
+   6:.\main.c      **** 
+   7:.\main.c      **** /*  Global values to be used by all functions */
+   8:.\main.c      **** uint16  counts[4];
+   9:.\main.c      **** uint8   chan = 0;
+  10:.\main.c      **** uint8   sample;
+  11:.\main.c      **** 
+  12:.\main.c      **** 
+  13:.\main.c      **** /*  Helper functions */
+  14:.\main.c      **** void    Get_Counts();
+ARM GAS  C:\Users\Chrispy\AppData\Local\Temp\cci7J7Xo.s 			page 2
+
+
+  15:.\main.c      **** float   Calc_Degs();
+  16:.\main.c      **** void    Output_Data(float);
+  17:.\main.c      **** 
+  18:.\main.c      **** void main() {
+  40              		.loc 1 18 0
+  41              		.cfi_startproc
+  42              		@ args = 0, pretend = 0, frame = 0
+  43              		@ frame_needed = 1, uses_anonymous_args = 0
+  44 0000 80B5     		push	{r7, lr}
+  45              	.LCFI0:
+  46              		.cfi_def_cfa_offset 8
+  47 0002 00AF     		add	r7, sp, #0
+  48              		.cfi_offset 14, -4
+  49              		.cfi_offset 7, -8
+  50              	.LCFI1:
+  51              		.cfi_def_cfa_register 7
+  19:.\main.c      **** 
+  20:.\main.c      ****     /*  Initialize the mux for the channels. This disconnects all of them,
+  21:.\main.c      ****         the selects the first channel. */
+  22:.\main.c      ****     AMux_1_Init();
+  52              		.loc 1 22 0
+  53 0004 FFF7FEFF 		bl	AMux_1_Start
+  23:.\main.c      ****     AMux_1_Select(0);
+  54              		.loc 1 23 0
+  55 0008 4FF00000 		mov	r0, #0
+  56 000c FFF7FEFF 		bl	AMux_1_FastSelect
+  24:.\main.c      ****     
+  25:.\main.c      ****     /*  Initialize the LCD for diagnostic information and testing. */
+  26:.\main.c      ****     LCD_Char_1_Start();
+  57              		.loc 1 26 0
+  58 0010 FFF7FEFF 		bl	LCD_Char_1_Start
+  27:.\main.c      ****     
+  28:.\main.c      ****     /*  Start the ADC, and begin taking reading. It is constantly running, so 
+  29:.\main.c      ****         there is no need to start and stop it. */
+  30:.\main.c      ****     ADC_SAR_1_Start();
+  59              		.loc 1 30 0
+  60 0014 FFF7FEFF 		bl	ADC_SAR_1_Start
+  31:.\main.c      ****     ADC_SAR_1_StartConvert();
+  61              		.loc 1 31 0
+  62 0018 FFF7FEFF 		bl	ADC_SAR_1_StartConvert
+  32:.\main.c      ****     
+  33:.\main.c      ****     /*  Starts the VDCA and sets the voltage to 0.0V. This will default the
+  34:.\main.c      ****         camera to 0degs. */
+  35:.\main.c      ****     VDAC8_1_Start();
+  63              		.loc 1 35 0
+  64 001c FFF7FEFF 		bl	VDAC8_1_Start
+  36:.\main.c      ****     VDAC8_1_SetValue(0);
+  65              		.loc 1 36 0
+  66 0020 4FF00000 		mov	r0, #0
+  67 0024 FFF7FEFF 		bl	VDAC8_1_SetValue
+  37:.\main.c      ****     
+  38:.\main.c      ****     /*  Initializes and start the counter. The counter will be reset when the first
+  39:.\main.c      ****         sound is heard. */
+  40:.\main.c      ****     Counter_1_Start();
+  68              		.loc 1 40 0
+  69 0028 FFF7FEFF 		bl	Counter_1_Start
+  41:.\main.c      **** 
+ARM GAS  C:\Users\Chrispy\AppData\Local\Temp\cci7J7Xo.s 			page 3
+
+
+  42:.\main.c      ****     /*  Values being declared and initialized for the program. */
+  43:.\main.c      ****     memset(counts, 0x0, 8);
+  70              		.loc 1 43 0
+  71 002c 40F20000 		movw	r0, #:lower16:counts
+  72 0030 C0F20000 		movt	r0, #:upper16:counts
+  73 0034 4FF00001 		mov	r1, #0
+  74 0038 4FF00802 		mov	r2, #8
+  75 003c FFF7FEFF 		bl	memset
+  76              	.L3:
+  44:.\main.c      **** 
+  45:.\main.c      ****     for(;;) {
+  46:.\main.c      ****         Control_Reg_1_Write(1);
+  77              		.loc 1 46 0
+  78 0040 4FF00100 		mov	r0, #1
+  79 0044 FFF7FEFF 		bl	Control_Reg_1_Write
+  47:.\main.c      ****         Control_Reg_1_Write(0);
+  80              		.loc 1 47 0
+  81 0048 4FF00000 		mov	r0, #0
+  82 004c FFF7FEFF 		bl	Control_Reg_1_Write
+  48:.\main.c      ****         Counter_1_ClearFIFO();
+  83              		.loc 1 48 0
+  84 0050 FFF7FEFF 		bl	Counter_1_ClearFIFO
+  49:.\main.c      ****         ADC_SAR_1_IsEndConversion(ADC_SAR_1_WAIT_FOR_RESULT);
+  85              		.loc 1 49 0
+  86 0054 4FF00000 		mov	r0, #0
+  87 0058 FFF7FEFF 		bl	ADC_SAR_1_IsEndConversion
+  50:.\main.c      ****         sample = ADC_SAR_1_GetResult8();
+  88              		.loc 1 50 0
+  89 005c FFF7FEFF 		bl	ADC_SAR_1_GetResult8
+  90 0060 0346     		mov	r3, r0
+  91 0062 DBB2     		uxtb	r3, r3
+  92 0064 DAB2     		uxtb	r2, r3
+  93 0066 40F20003 		movw	r3, #:lower16:sample
+  94 006a C0F20003 		movt	r3, #:upper16:sample
+  95 006e 1A70     		strb	r2, [r3, #0]
+  51:.\main.c      ****         
+  52:.\main.c      ****         if(sample > 150) {            
+  96              		.loc 1 52 0
+  97 0070 40F20003 		movw	r3, #:lower16:sample
+  98 0074 C0F20003 		movt	r3, #:upper16:sample
+  99 0078 1B78     		ldrb	r3, [r3, #0]	@ zero_extendqisi2
+ 100 007a 962B     		cmp	r3, #150
+ 101 007c 15D9     		bls	.L2
+  53:.\main.c      ****             Get_Counts();
+ 102              		.loc 1 53 0
+ 103 007e FFF7FEFF 		bl	Get_Counts
+  54:.\main.c      ****             
+  55:.\main.c      ****             Output_Data(Calc_Degs());
+ 104              		.loc 1 55 0
+ 105 0082 FFF7FEFF 		bl	Calc_Degs
+ 106 0086 0346     		mov	r3, r0
+ 107 0088 1846     		mov	r0, r3
+ 108 008a FFF7FEFF 		bl	Output_Data
+  56:.\main.c      **** 
+  57:.\main.c      ****             memset(counts, 0x0, 8);
+ 109              		.loc 1 57 0
+ 110 008e 40F20000 		movw	r0, #:lower16:counts
+ARM GAS  C:\Users\Chrispy\AppData\Local\Temp\cci7J7Xo.s 			page 4
+
+
+ 111 0092 C0F20000 		movt	r0, #:upper16:counts
+ 112 0096 4FF00001 		mov	r1, #0
+ 113 009a 4FF00802 		mov	r2, #8
+ 114 009e FFF7FEFF 		bl	memset
+  58:.\main.c      ****             CyDelay(2000);
+ 115              		.loc 1 58 0
+ 116 00a2 4FF4FA60 		mov	r0, #2000
+ 117 00a6 FFF7FEFF 		bl	CyDelay
+ 118              	.L2:
+  59:.\main.c      ****         }
+  60:.\main.c      ****         
+  61:.\main.c      ****         chan = (chan + 1) % 4;
+ 119              		.loc 1 61 0
+ 120 00aa 40F20003 		movw	r3, #:lower16:chan
+ 121 00ae C0F20003 		movt	r3, #:upper16:chan
+ 122 00b2 1B78     		ldrb	r3, [r3, #0]	@ zero_extendqisi2
+ 123 00b4 03F10102 		add	r2, r3, #1
+ 124 00b8 4FEAE273 		asr	r3, r2, #31
+ 125 00bc 4FEA9373 		lsr	r3, r3, #30
+ 126 00c0 1A44     		add	r2, r2, r3
+ 127 00c2 02F00302 		and	r2, r2, #3
+ 128 00c6 C3EB0203 		rsb	r3, r3, r2
+ 129 00ca DAB2     		uxtb	r2, r3
+ 130 00cc 40F20003 		movw	r3, #:lower16:chan
+ 131 00d0 C0F20003 		movt	r3, #:upper16:chan
+ 132 00d4 1A70     		strb	r2, [r3, #0]
+  62:.\main.c      ****         AMux_1_Select(chan);
+ 133              		.loc 1 62 0
+ 134 00d6 40F20003 		movw	r3, #:lower16:chan
+ 135 00da C0F20003 		movt	r3, #:upper16:chan
+ 136 00de 1B78     		ldrb	r3, [r3, #0]	@ zero_extendqisi2
+ 137 00e0 1846     		mov	r0, r3
+ 138 00e2 FFF7FEFF 		bl	AMux_1_FastSelect
+  63:.\main.c      ****     }
+ 139              		.loc 1 63 0
+ 140 00e6 ABE7     		b	.L3
+ 141              		.cfi_endproc
+ 142              	.LFE29:
+ 143              		.size	main, .-main
+ 144              		.section	.text.Get_Counts,"ax",%progbits
+ 145              		.align	2
+ 146              		.global	Get_Counts
+ 147              		.thumb
+ 148              		.thumb_func
+ 149              		.type	Get_Counts, %function
+ 150              	Get_Counts:
+ 151              	.LFB30:
+  64:.\main.c      **** }
+  65:.\main.c      **** 
+  66:.\main.c      **** void Get_Counts() {
+ 152              		.loc 1 66 0
+ 153              		.cfi_startproc
+ 154              		@ args = 0, pretend = 0, frame = 8
+ 155              		@ frame_needed = 1, uses_anonymous_args = 0
+ 156 0000 90B5     		push	{r4, r7, lr}
+ 157              	.LCFI2:
+ 158              		.cfi_def_cfa_offset 12
+ARM GAS  C:\Users\Chrispy\AppData\Local\Temp\cci7J7Xo.s 			page 5
+
+
+ 159 0002 83B0     		sub	sp, sp, #12
+ 160              	.LCFI3:
+ 161              		.cfi_def_cfa_offset 24
+ 162 0004 00AF     		add	r7, sp, #0
+ 163              		.cfi_offset 14, -4
+ 164              		.cfi_offset 7, -8
+ 165              		.cfi_offset 4, -12
+ 166              	.LCFI4:
+ 167              		.cfi_def_cfa_register 7
+  67:.\main.c      ****     counts[chan] = Counter_1_ReadCounter();
+ 168              		.loc 1 67 0
+ 169 0006 40F20003 		movw	r3, #:lower16:chan
+ 170 000a C0F20003 		movt	r3, #:upper16:chan
+ 171 000e 1B78     		ldrb	r3, [r3, #0]	@ zero_extendqisi2
+ 172 0010 1C46     		mov	r4, r3
+ 173 0012 FFF7FEFF 		bl	Counter_1_ReadCounter
+ 174 0016 0346     		mov	r3, r0
+ 175 0018 1A46     		mov	r2, r3
+ 176 001a 40F20003 		movw	r3, #:lower16:counts
+ 177 001e C0F20003 		movt	r3, #:upper16:counts
+ 178 0022 23F81420 		strh	r2, [r3, r4, lsl #1]	@ movhi
+  68:.\main.c      ****     chan = (chan + 1) % 4;
+ 179              		.loc 1 68 0
+ 180 0026 40F20003 		movw	r3, #:lower16:chan
+ 181 002a C0F20003 		movt	r3, #:upper16:chan
+ 182 002e 1B78     		ldrb	r3, [r3, #0]	@ zero_extendqisi2
+ 183 0030 03F10102 		add	r2, r3, #1
+ 184 0034 4FEAE273 		asr	r3, r2, #31
+ 185 0038 4FEA9373 		lsr	r3, r3, #30
+ 186 003c 1A44     		add	r2, r2, r3
+ 187 003e 02F00302 		and	r2, r2, #3
+ 188 0042 C3EB0203 		rsb	r3, r3, r2
+ 189 0046 DAB2     		uxtb	r2, r3
+ 190 0048 40F20003 		movw	r3, #:lower16:chan
+ 191 004c C0F20003 		movt	r3, #:upper16:chan
+ 192 0050 1A70     		strb	r2, [r3, #0]
+  69:.\main.c      ****     AMux_1_Select(chan);
+ 193              		.loc 1 69 0
+ 194 0052 40F20003 		movw	r3, #:lower16:chan
+ 195 0056 C0F20003 		movt	r3, #:upper16:chan
+ 196 005a 1B78     		ldrb	r3, [r3, #0]	@ zero_extendqisi2
+ 197 005c 1846     		mov	r0, r3
+ 198 005e FFF7FEFF 		bl	AMux_1_FastSelect
+  70:.\main.c      ****     
+  71:.\main.c      ****     uint8 count = 1;
+ 199              		.loc 1 71 0
+ 200 0062 4FF00103 		mov	r3, #1
+ 201 0066 FB71     		strb	r3, [r7, #7]
+  72:.\main.c      ****     while (count < 4) {
+ 202              		.loc 1 72 0
+ 203 0068 54E0     		b	.L6
+ 204              	.L8:
+  73:.\main.c      ****         ADC_SAR_1_IsEndConversion(ADC_SAR_1_WAIT_FOR_RESULT);
+ 205              		.loc 1 73 0
+ 206 006a 4FF00000 		mov	r0, #0
+ 207 006e FFF7FEFF 		bl	ADC_SAR_1_IsEndConversion
+  74:.\main.c      ****         sample = ADC_SAR_1_GetResult8();
+ARM GAS  C:\Users\Chrispy\AppData\Local\Temp\cci7J7Xo.s 			page 6
+
+
+ 208              		.loc 1 74 0
+ 209 0072 FFF7FEFF 		bl	ADC_SAR_1_GetResult8
+ 210 0076 0346     		mov	r3, r0
+ 211 0078 DBB2     		uxtb	r3, r3
+ 212 007a DAB2     		uxtb	r2, r3
+ 213 007c 40F20003 		movw	r3, #:lower16:sample
+ 214 0080 C0F20003 		movt	r3, #:upper16:sample
+ 215 0084 1A70     		strb	r2, [r3, #0]
+  75:.\main.c      ****         if((sample > 145) && (counts[chan] == 0)) {
+ 216              		.loc 1 75 0
+ 217 0086 40F20003 		movw	r3, #:lower16:sample
+ 218 008a C0F20003 		movt	r3, #:upper16:sample
+ 219 008e 1B78     		ldrb	r3, [r3, #0]	@ zero_extendqisi2
+ 220 0090 912B     		cmp	r3, #145
+ 221 0092 21D9     		bls	.L7
+ 222 0094 40F20003 		movw	r3, #:lower16:chan
+ 223 0098 C0F20003 		movt	r3, #:upper16:chan
+ 224 009c 1B78     		ldrb	r3, [r3, #0]	@ zero_extendqisi2
+ 225 009e 1A46     		mov	r2, r3
+ 226 00a0 40F20003 		movw	r3, #:lower16:counts
+ 227 00a4 C0F20003 		movt	r3, #:upper16:counts
+ 228 00a8 33F81230 		ldrh	r3, [r3, r2, lsl #1]
+ 229 00ac 002B     		cmp	r3, #0
+ 230 00ae 13D1     		bne	.L7
+  76:.\main.c      ****             counts[chan] = Counter_1_ReadCounter();
+ 231              		.loc 1 76 0
+ 232 00b0 40F20003 		movw	r3, #:lower16:chan
+ 233 00b4 C0F20003 		movt	r3, #:upper16:chan
+ 234 00b8 1B78     		ldrb	r3, [r3, #0]	@ zero_extendqisi2
+ 235 00ba 1C46     		mov	r4, r3
+ 236 00bc FFF7FEFF 		bl	Counter_1_ReadCounter
+ 237 00c0 0346     		mov	r3, r0
+ 238 00c2 1A46     		mov	r2, r3
+ 239 00c4 40F20003 		movw	r3, #:lower16:counts
+ 240 00c8 C0F20003 		movt	r3, #:upper16:counts
+ 241 00cc 23F81420 		strh	r2, [r3, r4, lsl #1]	@ movhi
+  77:.\main.c      ****             count++;
+ 242              		.loc 1 77 0
+ 243 00d0 FB79     		ldrb	r3, [r7, #7]
+ 244 00d2 03F10103 		add	r3, r3, #1
+ 245 00d6 FB71     		strb	r3, [r7, #7]
+ 246              	.L7:
+  78:.\main.c      ****         }
+  79:.\main.c      ****         
+  80:.\main.c      ****         chan = (chan + 1) % 4;
+ 247              		.loc 1 80 0
+ 248 00d8 40F20003 		movw	r3, #:lower16:chan
+ 249 00dc C0F20003 		movt	r3, #:upper16:chan
+ 250 00e0 1B78     		ldrb	r3, [r3, #0]	@ zero_extendqisi2
+ 251 00e2 03F10102 		add	r2, r3, #1
+ 252 00e6 4FEAE273 		asr	r3, r2, #31
+ 253 00ea 4FEA9373 		lsr	r3, r3, #30
+ 254 00ee 1A44     		add	r2, r2, r3
+ 255 00f0 02F00302 		and	r2, r2, #3
+ 256 00f4 C3EB0203 		rsb	r3, r3, r2
+ 257 00f8 DAB2     		uxtb	r2, r3
+ 258 00fa 40F20003 		movw	r3, #:lower16:chan
+ARM GAS  C:\Users\Chrispy\AppData\Local\Temp\cci7J7Xo.s 			page 7
+
+
+ 259 00fe C0F20003 		movt	r3, #:upper16:chan
+ 260 0102 1A70     		strb	r2, [r3, #0]
+  81:.\main.c      ****         AMux_1_Select(chan);
+ 261              		.loc 1 81 0
+ 262 0104 40F20003 		movw	r3, #:lower16:chan
+ 263 0108 C0F20003 		movt	r3, #:upper16:chan
+ 264 010c 1B78     		ldrb	r3, [r3, #0]	@ zero_extendqisi2
+ 265 010e 1846     		mov	r0, r3
+ 266 0110 FFF7FEFF 		bl	AMux_1_FastSelect
+ 267              	.L6:
+ 268              		.loc 1 72 0
+ 269 0114 FB79     		ldrb	r3, [r7, #7]	@ zero_extendqisi2
+ 270 0116 032B     		cmp	r3, #3
+ 271 0118 A7D9     		bls	.L8
+  82:.\main.c      ****     }
+  83:.\main.c      **** }
+ 272              		.loc 1 83 0
+ 273 011a 07F10C07 		add	r7, r7, #12
+ 274 011e BD46     		mov	sp, r7
+ 275 0120 90BD     		pop	{r4, r7, pc}
+ 276              		.cfi_endproc
+ 277              	.LFE30:
+ 278              		.size	Get_Counts, .-Get_Counts
+ 279              		.global	__aeabi_i2f
+ 280              		.global	__aeabi_fdiv
+ 281              		.global	__aeabi_f2d
+ 282              		.global	__aeabi_dmul
+ 283              		.global	__aeabi_ddiv
+ 284              		.global	__aeabi_d2f
+ 285              		.global	__aeabi_fsub
+ 286              		.global	__aeabi_fadd
+ 287 0122 00BF     		.section	.text.Calc_Degs,"ax",%progbits
+ 288              		.align	2
+ 289              		.global	Calc_Degs
+ 290              		.thumb
+ 291              		.thumb_func
+ 292              		.type	Calc_Degs, %function
+ 293              	Calc_Degs:
+ 294              	.LFB31:
+  84:.\main.c      **** 
+  85:.\main.c      **** float Calc_Degs() {
+ 295              		.loc 1 85 0
+ 296              		.cfi_startproc
+ 297              		@ args = 0, pretend = 0, frame = 16
+ 298              		@ frame_needed = 1, uses_anonymous_args = 0
+ 299 0000 80B5     		push	{r7, lr}
+ 300              	.LCFI5:
+ 301              		.cfi_def_cfa_offset 8
+ 302 0002 84B0     		sub	sp, sp, #16
+ 303              	.LCFI6:
+ 304              		.cfi_def_cfa_offset 24
+ 305 0004 00AF     		add	r7, sp, #0
+ 306              		.cfi_offset 14, -4
+ 307              		.cfi_offset 7, -8
+ 308              	.LCFI7:
+ 309              		.cfi_def_cfa_register 7
+  86:.\main.c      ****     uint8 i;
+ARM GAS  C:\Users\Chrispy\AppData\Local\Temp\cci7J7Xo.s 			page 8
+
+
+  87:.\main.c      ****     for(i = 0; i < 4; i++) {
+ 310              		.loc 1 87 0
+ 311 0006 4FF00003 		mov	r3, #0
+ 312 000a FB70     		strb	r3, [r7, #3]
+ 313 000c 14E0     		b	.L11
+ 314              	.L13:
+  88:.\main.c      ****         if(counts[i] < 500) { chan = i; }
+ 315              		.loc 1 88 0
+ 316 000e FA78     		ldrb	r2, [r7, #3]	@ zero_extendqisi2
+ 317 0010 40F20003 		movw	r3, #:lower16:counts
+ 318 0014 C0F20003 		movt	r3, #:upper16:counts
+ 319 0018 33F81220 		ldrh	r2, [r3, r2, lsl #1]
+ 320 001c 40F2F313 		movw	r3, #499
+ 321 0020 9A42     		cmp	r2, r3
+ 322 0022 05D8     		bhi	.L12
+ 323 0024 40F20003 		movw	r3, #:lower16:chan
+ 324 0028 C0F20003 		movt	r3, #:upper16:chan
+ 325 002c FA78     		ldrb	r2, [r7, #3]
+ 326 002e 1A70     		strb	r2, [r3, #0]
+ 327              	.L12:
+ 328              		.loc 1 87 0
+ 329 0030 FB78     		ldrb	r3, [r7, #3]
+ 330 0032 03F10103 		add	r3, r3, #1
+ 331 0036 FB70     		strb	r3, [r7, #3]
+ 332              	.L11:
+ 333 0038 FB78     		ldrb	r3, [r7, #3]	@ zero_extendqisi2
+ 334 003a 032B     		cmp	r3, #3
+ 335 003c E7D9     		bls	.L13
+  89:.\main.c      ****     }
+  90:.\main.c      ****     
+  91:.\main.c      ****     float degs = 0;
+ 336              		.loc 1 91 0
+ 337 003e E64B     		ldr	r3, .L26+16	@ float
+ 338 0040 7B60     		str	r3, [r7, #4]	@ float
+  92:.\main.c      ****     float mid = 0;
+ 339              		.loc 1 92 0
+ 340 0042 E54B     		ldr	r3, .L26+16	@ float
+ 341 0044 BB60     		str	r3, [r7, #8]	@ float
+  93:.\main.c      ****     float diff = 0;
+ 342              		.loc 1 93 0
+ 343 0046 E44B     		ldr	r3, .L26+16	@ float
+ 344 0048 FB60     		str	r3, [r7, #12]	@ float
+  94:.\main.c      ****     switch(chan) {
+ 345              		.loc 1 94 0
+ 346 004a 40F20003 		movw	r3, #:lower16:chan
+ 347 004e C0F20003 		movt	r3, #:upper16:chan
+ 348 0052 1B78     		ldrb	r3, [r3, #0]	@ zero_extendqisi2
+ 349 0054 032B     		cmp	r3, #3
+ 350 0056 00F2AF81 		bhi	.L14
+ 351 005a 01A2     		adr	r2, .L19
+ 352 005c 52F823F0 		ldr	pc, [r2, r3, lsl #2]
+ 353              		.align	2
+ 354              	.L19:
+ 355 0060 71000000 		.word	.L15+1
+ 356 0064 E1020000 		.word	.L16+1
+ 357 0068 3D010000 		.word	.L17+1
+ 358 006c 0F020000 		.word	.L18+1
+ARM GAS  C:\Users\Chrispy\AppData\Local\Temp\cci7J7Xo.s 			page 9
+
+
+ 359              	.L15:
+  95:.\main.c      ****         case(0):
+  96:.\main.c      ****             mid = (counts[1] + counts[2]) / 2;
+ 360              		.loc 1 96 0
+ 361 0070 40F20003 		movw	r3, #:lower16:counts
+ 362 0074 C0F20003 		movt	r3, #:upper16:counts
+ 363 0078 5B88     		ldrh	r3, [r3, #2]
+ 364 007a 1A46     		mov	r2, r3
+ 365 007c 40F20003 		movw	r3, #:lower16:counts
+ 366 0080 C0F20003 		movt	r3, #:upper16:counts
+ 367 0084 9B88     		ldrh	r3, [r3, #4]
+ 368 0086 1344     		add	r3, r2, r3
+ 369 0088 4FEAD372 		lsr	r2, r3, #31
+ 370 008c 1344     		add	r3, r2, r3
+ 371 008e 4FEA6303 		asr	r3, r3, #1
+ 372 0092 1846     		mov	r0, r3
+ 373 0094 FFF7FEFF 		bl	__aeabi_i2f
+ 374 0098 0346     		mov	r3, r0
+ 375 009a BB60     		str	r3, [r7, #8]	@ float
+  97:.\main.c      ****             diff = fabsf(counts[1] - counts[2]);
+ 376              		.loc 1 97 0
+ 377 009c 40F20003 		movw	r3, #:lower16:counts
+ 378 00a0 C0F20003 		movt	r3, #:upper16:counts
+ 379 00a4 5B88     		ldrh	r3, [r3, #2]
+ 380 00a6 1A46     		mov	r2, r3
+ 381 00a8 40F20003 		movw	r3, #:lower16:counts
+ 382 00ac C0F20003 		movt	r3, #:upper16:counts
+ 383 00b0 9B88     		ldrh	r3, [r3, #4]
+ 384 00b2 C3EB0203 		rsb	r3, r3, r2
+ 385 00b6 1846     		mov	r0, r3
+ 386 00b8 FFF7FEFF 		bl	__aeabi_i2f
+ 387 00bc 0346     		mov	r3, r0
+ 388 00be 23F00043 		bic	r3, r3, #-2147483648
+ 389 00c2 FB60     		str	r3, [r7, #12]	@ float
+  98:.\main.c      ****             
+  99:.\main.c      ****             degs = atan(diff / mid) * 180 / PI;
+ 390              		.loc 1 99 0
+ 391 00c4 F868     		ldr	r0, [r7, #12]	@ float
+ 392 00c6 B968     		ldr	r1, [r7, #8]	@ float
+ 393 00c8 FFF7FEFF 		bl	__aeabi_fdiv
+ 394 00cc 0346     		mov	r3, r0
+ 395 00ce 1846     		mov	r0, r3
+ 396 00d0 FFF7FEFF 		bl	__aeabi_f2d
+ 397 00d4 0246     		mov	r2, r0
+ 398 00d6 0B46     		mov	r3, r1
+ 399 00d8 1046     		mov	r0, r2
+ 400 00da 1946     		mov	r1, r3
+ 401 00dc FFF7FEFF 		bl	atan
+ 402 00e0 0246     		mov	r2, r0
+ 403 00e2 0B46     		mov	r3, r1
+ 404 00e4 1046     		mov	r0, r2
+ 405 00e6 1946     		mov	r1, r3
+ 406 00e8 B7A3     		adr	r3, .L26
+ 407 00ea D3E90023 		ldrd	r2, [r3]
+ 408 00ee FFF7FEFF 		bl	__aeabi_dmul
+ 409 00f2 0246     		mov	r2, r0
+ 410 00f4 0B46     		mov	r3, r1
+ARM GAS  C:\Users\Chrispy\AppData\Local\Temp\cci7J7Xo.s 			page 10
+
+
+ 411 00f6 1046     		mov	r0, r2
+ 412 00f8 1946     		mov	r1, r3
+ 413 00fa B5A3     		adr	r3, .L26+8
+ 414 00fc D3E90023 		ldrd	r2, [r3]
+ 415 0100 FFF7FEFF 		bl	__aeabi_ddiv
+ 416 0104 0246     		mov	r2, r0
+ 417 0106 0B46     		mov	r3, r1
+ 418 0108 1046     		mov	r0, r2
+ 419 010a 1946     		mov	r1, r3
+ 420 010c FFF7FEFF 		bl	__aeabi_d2f
+ 421 0110 0346     		mov	r3, r0
+ 422 0112 7B60     		str	r3, [r7, #4]	@ float
+ 100:.\main.c      ****             
+ 101:.\main.c      ****             if(counts[1] < counts[2]) { degs = -degs + 359; }
+ 423              		.loc 1 101 0
+ 424 0114 40F20003 		movw	r3, #:lower16:counts
+ 425 0118 C0F20003 		movt	r3, #:upper16:counts
+ 426 011c 5A88     		ldrh	r2, [r3, #2]
+ 427 011e 40F20003 		movw	r3, #:lower16:counts
+ 428 0122 C0F20003 		movt	r3, #:upper16:counts
+ 429 0126 9B88     		ldrh	r3, [r3, #4]
+ 430 0128 9A42     		cmp	r2, r3
+ 431 012a 80F04481 		bcs	.L25
+ 432 012e AB48     		ldr	r0, .L26+20	@ float
+ 433 0130 7968     		ldr	r1, [r7, #4]	@ float
+ 434 0132 FFF7FEFF 		bl	__aeabi_fsub
+ 435 0136 0346     		mov	r3, r0
+ 436 0138 7B60     		str	r3, [r7, #4]	@ float
+ 102:.\main.c      ****         break;
+ 437              		.loc 1 102 0
+ 438 013a 3DE1     		b	.L14
+ 439              	.L17:
+ 103:.\main.c      ****         
+ 104:.\main.c      ****         case(2):
+ 105:.\main.c      ****             mid = (counts[0] + counts[3]) / 2;
+ 440              		.loc 1 105 0
+ 441 013c 40F20003 		movw	r3, #:lower16:counts
+ 442 0140 C0F20003 		movt	r3, #:upper16:counts
+ 443 0144 1B88     		ldrh	r3, [r3, #0]
+ 444 0146 1A46     		mov	r2, r3
+ 445 0148 40F20003 		movw	r3, #:lower16:counts
+ 446 014c C0F20003 		movt	r3, #:upper16:counts
+ 447 0150 DB88     		ldrh	r3, [r3, #6]
+ 448 0152 1344     		add	r3, r2, r3
+ 449 0154 4FEAD372 		lsr	r2, r3, #31
+ 450 0158 1344     		add	r3, r2, r3
+ 451 015a 4FEA6303 		asr	r3, r3, #1
+ 452 015e 1846     		mov	r0, r3
+ 453 0160 FFF7FEFF 		bl	__aeabi_i2f
+ 454 0164 0346     		mov	r3, r0
+ 455 0166 BB60     		str	r3, [r7, #8]	@ float
+ 106:.\main.c      ****             diff = fabsf(counts[0] - counts[3]);
+ 456              		.loc 1 106 0
+ 457 0168 40F20003 		movw	r3, #:lower16:counts
+ 458 016c C0F20003 		movt	r3, #:upper16:counts
+ 459 0170 1B88     		ldrh	r3, [r3, #0]
+ 460 0172 1A46     		mov	r2, r3
+ARM GAS  C:\Users\Chrispy\AppData\Local\Temp\cci7J7Xo.s 			page 11
+
+
+ 461 0174 40F20003 		movw	r3, #:lower16:counts
+ 462 0178 C0F20003 		movt	r3, #:upper16:counts
+ 463 017c DB88     		ldrh	r3, [r3, #6]
+ 464 017e C3EB0203 		rsb	r3, r3, r2
+ 465 0182 1846     		mov	r0, r3
+ 466 0184 FFF7FEFF 		bl	__aeabi_i2f
+ 467 0188 0346     		mov	r3, r0
+ 468 018a 23F00043 		bic	r3, r3, #-2147483648
+ 469 018e FB60     		str	r3, [r7, #12]	@ float
+ 107:.\main.c      ****             
+ 108:.\main.c      ****             degs = atan(diff / mid) * 180 / PI;
+ 470              		.loc 1 108 0
+ 471 0190 F868     		ldr	r0, [r7, #12]	@ float
+ 472 0192 B968     		ldr	r1, [r7, #8]	@ float
+ 473 0194 FFF7FEFF 		bl	__aeabi_fdiv
+ 474 0198 0346     		mov	r3, r0
+ 475 019a 1846     		mov	r0, r3
+ 476 019c FFF7FEFF 		bl	__aeabi_f2d
+ 477 01a0 0246     		mov	r2, r0
+ 478 01a2 0B46     		mov	r3, r1
+ 479 01a4 1046     		mov	r0, r2
+ 480 01a6 1946     		mov	r1, r3
+ 481 01a8 FFF7FEFF 		bl	atan
+ 482 01ac 0246     		mov	r2, r0
+ 483 01ae 0B46     		mov	r3, r1
+ 484 01b0 1046     		mov	r0, r2
+ 485 01b2 1946     		mov	r1, r3
+ 486 01b4 84A3     		adr	r3, .L26
+ 487 01b6 D3E90023 		ldrd	r2, [r3]
+ 488 01ba FFF7FEFF 		bl	__aeabi_dmul
+ 489 01be 0246     		mov	r2, r0
+ 490 01c0 0B46     		mov	r3, r1
+ 491 01c2 1046     		mov	r0, r2
+ 492 01c4 1946     		mov	r1, r3
+ 493 01c6 82A3     		adr	r3, .L26+8
+ 494 01c8 D3E90023 		ldrd	r2, [r3]
+ 495 01cc FFF7FEFF 		bl	__aeabi_ddiv
+ 496 01d0 0246     		mov	r2, r0
+ 497 01d2 0B46     		mov	r3, r1
+ 498 01d4 1046     		mov	r0, r2
+ 499 01d6 1946     		mov	r1, r3
+ 500 01d8 FFF7FEFF 		bl	__aeabi_d2f
+ 501 01dc 0346     		mov	r3, r0
+ 502 01de 7B60     		str	r3, [r7, #4]	@ float
+ 109:.\main.c      ****             
+ 110:.\main.c      ****             if(counts[0] < counts[3]) { degs = -degs; }
+ 503              		.loc 1 110 0
+ 504 01e0 40F20003 		movw	r3, #:lower16:counts
+ 505 01e4 C0F20003 		movt	r3, #:upper16:counts
+ 506 01e8 1A88     		ldrh	r2, [r3, #0]
+ 507 01ea 40F20003 		movw	r3, #:lower16:counts
+ 508 01ee C0F20003 		movt	r3, #:upper16:counts
+ 509 01f2 DB88     		ldrh	r3, [r3, #6]
+ 510 01f4 9A42     		cmp	r2, r3
+ 511 01f6 03D2     		bcs	.L21
+ 512 01f8 7B68     		ldr	r3, [r7, #4]
+ 513 01fa 83F00043 		eor	r3, r3, #-2147483648
+ARM GAS  C:\Users\Chrispy\AppData\Local\Temp\cci7J7Xo.s 			page 12
+
+
+ 514 01fe 7B60     		str	r3, [r7, #4]	@ float
+ 515              	.L21:
+ 111:.\main.c      ****             
+ 112:.\main.c      ****             degs = degs + 90;
+ 516              		.loc 1 112 0
+ 517 0200 7868     		ldr	r0, [r7, #4]	@ float
+ 518 0202 7749     		ldr	r1, .L26+24	@ float
+ 519 0204 FFF7FEFF 		bl	__aeabi_fadd
+ 520 0208 0346     		mov	r3, r0
+ 521 020a 7B60     		str	r3, [r7, #4]	@ float
+ 113:.\main.c      ****         break;
+ 522              		.loc 1 113 0
+ 523 020c D4E0     		b	.L14
+ 524              	.L18:
+ 114:.\main.c      ****         
+ 115:.\main.c      ****         case(3):
+ 116:.\main.c      ****             mid = (counts[1] + counts[2]) / 2;
+ 525              		.loc 1 116 0
+ 526 020e 40F20003 		movw	r3, #:lower16:counts
+ 527 0212 C0F20003 		movt	r3, #:upper16:counts
+ 528 0216 5B88     		ldrh	r3, [r3, #2]
+ 529 0218 1A46     		mov	r2, r3
+ 530 021a 40F20003 		movw	r3, #:lower16:counts
+ 531 021e C0F20003 		movt	r3, #:upper16:counts
+ 532 0222 9B88     		ldrh	r3, [r3, #4]
+ 533 0224 1344     		add	r3, r2, r3
+ 534 0226 4FEAD372 		lsr	r2, r3, #31
+ 535 022a 1344     		add	r3, r2, r3
+ 536 022c 4FEA6303 		asr	r3, r3, #1
+ 537 0230 1846     		mov	r0, r3
+ 538 0232 FFF7FEFF 		bl	__aeabi_i2f
+ 539 0236 0346     		mov	r3, r0
+ 540 0238 BB60     		str	r3, [r7, #8]	@ float
+ 117:.\main.c      ****             diff = fabsf(counts[1] - counts[2]);
+ 541              		.loc 1 117 0
+ 542 023a 40F20003 		movw	r3, #:lower16:counts
+ 543 023e C0F20003 		movt	r3, #:upper16:counts
+ 544 0242 5B88     		ldrh	r3, [r3, #2]
+ 545 0244 1A46     		mov	r2, r3
+ 546 0246 40F20003 		movw	r3, #:lower16:counts
+ 547 024a C0F20003 		movt	r3, #:upper16:counts
+ 548 024e 9B88     		ldrh	r3, [r3, #4]
+ 549 0250 C3EB0203 		rsb	r3, r3, r2
+ 550 0254 1846     		mov	r0, r3
+ 551 0256 FFF7FEFF 		bl	__aeabi_i2f
+ 552 025a 0346     		mov	r3, r0
+ 553 025c 23F00043 		bic	r3, r3, #-2147483648
+ 554 0260 FB60     		str	r3, [r7, #12]	@ float
+ 118:.\main.c      ****             
+ 119:.\main.c      ****             degs = atan(diff / mid) * 180 / PI;
+ 555              		.loc 1 119 0
+ 556 0262 F868     		ldr	r0, [r7, #12]	@ float
+ 557 0264 B968     		ldr	r1, [r7, #8]	@ float
+ 558 0266 FFF7FEFF 		bl	__aeabi_fdiv
+ 559 026a 0346     		mov	r3, r0
+ 560 026c 1846     		mov	r0, r3
+ 561 026e FFF7FEFF 		bl	__aeabi_f2d
+ARM GAS  C:\Users\Chrispy\AppData\Local\Temp\cci7J7Xo.s 			page 13
+
+
+ 562 0272 0246     		mov	r2, r0
+ 563 0274 0B46     		mov	r3, r1
+ 564 0276 1046     		mov	r0, r2
+ 565 0278 1946     		mov	r1, r3
+ 566 027a FFF7FEFF 		bl	atan
+ 567 027e 0246     		mov	r2, r0
+ 568 0280 0B46     		mov	r3, r1
+ 569 0282 1046     		mov	r0, r2
+ 570 0284 1946     		mov	r1, r3
+ 571 0286 50A3     		adr	r3, .L26
+ 572 0288 D3E90023 		ldrd	r2, [r3]
+ 573 028c FFF7FEFF 		bl	__aeabi_dmul
+ 574 0290 0246     		mov	r2, r0
+ 575 0292 0B46     		mov	r3, r1
+ 576 0294 1046     		mov	r0, r2
+ 577 0296 1946     		mov	r1, r3
+ 578 0298 4DA3     		adr	r3, .L26+8
+ 579 029a D3E90023 		ldrd	r2, [r3]
+ 580 029e FFF7FEFF 		bl	__aeabi_ddiv
+ 581 02a2 0246     		mov	r2, r0
+ 582 02a4 0B46     		mov	r3, r1
+ 583 02a6 1046     		mov	r0, r2
+ 584 02a8 1946     		mov	r1, r3
+ 585 02aa FFF7FEFF 		bl	__aeabi_d2f
+ 586 02ae 0346     		mov	r3, r0
+ 587 02b0 7B60     		str	r3, [r7, #4]	@ float
+ 120:.\main.c      ****             
+ 121:.\main.c      ****             if(counts[2] < counts[1]) { degs = -degs; }
+ 588              		.loc 1 121 0
+ 589 02b2 40F20003 		movw	r3, #:lower16:counts
+ 590 02b6 C0F20003 		movt	r3, #:upper16:counts
+ 591 02ba 9A88     		ldrh	r2, [r3, #4]
+ 592 02bc 40F20003 		movw	r3, #:lower16:counts
+ 593 02c0 C0F20003 		movt	r3, #:upper16:counts
+ 594 02c4 5B88     		ldrh	r3, [r3, #2]
+ 595 02c6 9A42     		cmp	r2, r3
+ 596 02c8 03D2     		bcs	.L22
+ 597 02ca 7B68     		ldr	r3, [r7, #4]
+ 598 02cc 83F00043 		eor	r3, r3, #-2147483648
+ 599 02d0 7B60     		str	r3, [r7, #4]	@ float
+ 600              	.L22:
+ 122:.\main.c      ****             
+ 123:.\main.c      ****             degs = degs + 180;
+ 601              		.loc 1 123 0
+ 602 02d2 7868     		ldr	r0, [r7, #4]	@ float
+ 603 02d4 4349     		ldr	r1, .L26+28	@ float
+ 604 02d6 FFF7FEFF 		bl	__aeabi_fadd
+ 605 02da 0346     		mov	r3, r0
+ 606 02dc 7B60     		str	r3, [r7, #4]	@ float
+ 124:.\main.c      ****         break;
+ 607              		.loc 1 124 0
+ 608 02de 6BE0     		b	.L14
+ 609              	.L16:
+ 125:.\main.c      ****         
+ 126:.\main.c      ****         case(1):
+ 127:.\main.c      ****             mid = (counts[0] + counts[3]) / 2;
+ 610              		.loc 1 127 0
+ARM GAS  C:\Users\Chrispy\AppData\Local\Temp\cci7J7Xo.s 			page 14
+
+
+ 611 02e0 40F20003 		movw	r3, #:lower16:counts
+ 612 02e4 C0F20003 		movt	r3, #:upper16:counts
+ 613 02e8 1B88     		ldrh	r3, [r3, #0]
+ 614 02ea 1A46     		mov	r2, r3
+ 615 02ec 40F20003 		movw	r3, #:lower16:counts
+ 616 02f0 C0F20003 		movt	r3, #:upper16:counts
+ 617 02f4 DB88     		ldrh	r3, [r3, #6]
+ 618 02f6 1344     		add	r3, r2, r3
+ 619 02f8 4FEAD372 		lsr	r2, r3, #31
+ 620 02fc 1344     		add	r3, r2, r3
+ 621 02fe 4FEA6303 		asr	r3, r3, #1
+ 622 0302 1846     		mov	r0, r3
+ 623 0304 FFF7FEFF 		bl	__aeabi_i2f
+ 624 0308 0346     		mov	r3, r0
+ 625 030a BB60     		str	r3, [r7, #8]	@ float
+ 128:.\main.c      ****             diff = fabsf(counts[0] - counts[3]);
+ 626              		.loc 1 128 0
+ 627 030c 40F20003 		movw	r3, #:lower16:counts
+ 628 0310 C0F20003 		movt	r3, #:upper16:counts
+ 629 0314 1B88     		ldrh	r3, [r3, #0]
+ 630 0316 1A46     		mov	r2, r3
+ 631 0318 40F20003 		movw	r3, #:lower16:counts
+ 632 031c C0F20003 		movt	r3, #:upper16:counts
+ 633 0320 DB88     		ldrh	r3, [r3, #6]
+ 634 0322 C3EB0203 		rsb	r3, r3, r2
+ 635 0326 1846     		mov	r0, r3
+ 636 0328 FFF7FEFF 		bl	__aeabi_i2f
+ 637 032c 0346     		mov	r3, r0
+ 638 032e 23F00043 		bic	r3, r3, #-2147483648
+ 639 0332 FB60     		str	r3, [r7, #12]	@ float
+ 129:.\main.c      ****             
+ 130:.\main.c      ****             degs = atan(diff / mid) * 180 / PI;
+ 640              		.loc 1 130 0
+ 641 0334 F868     		ldr	r0, [r7, #12]	@ float
+ 642 0336 B968     		ldr	r1, [r7, #8]	@ float
+ 643 0338 FFF7FEFF 		bl	__aeabi_fdiv
+ 644 033c 0346     		mov	r3, r0
+ 645 033e 1846     		mov	r0, r3
+ 646 0340 FFF7FEFF 		bl	__aeabi_f2d
+ 647 0344 0246     		mov	r2, r0
+ 648 0346 0B46     		mov	r3, r1
+ 649 0348 1046     		mov	r0, r2
+ 650 034a 1946     		mov	r1, r3
+ 651 034c FFF7FEFF 		bl	atan
+ 652 0350 0246     		mov	r2, r0
+ 653 0352 0B46     		mov	r3, r1
+ 654 0354 1046     		mov	r0, r2
+ 655 0356 1946     		mov	r1, r3
+ 656 0358 1BA3     		adr	r3, .L26
+ 657 035a D3E90023 		ldrd	r2, [r3]
+ 658 035e FFF7FEFF 		bl	__aeabi_dmul
+ 659 0362 0246     		mov	r2, r0
+ 660 0364 0B46     		mov	r3, r1
+ 661 0366 1046     		mov	r0, r2
+ 662 0368 1946     		mov	r1, r3
+ 663 036a 19A3     		adr	r3, .L26+8
+ 664 036c D3E90023 		ldrd	r2, [r3]
+ARM GAS  C:\Users\Chrispy\AppData\Local\Temp\cci7J7Xo.s 			page 15
+
+
+ 665 0370 FFF7FEFF 		bl	__aeabi_ddiv
+ 666 0374 0246     		mov	r2, r0
+ 667 0376 0B46     		mov	r3, r1
+ 668 0378 1046     		mov	r0, r2
+ 669 037a 1946     		mov	r1, r3
+ 670 037c FFF7FEFF 		bl	__aeabi_d2f
+ 671 0380 0346     		mov	r3, r0
+ 672 0382 7B60     		str	r3, [r7, #4]	@ float
+ 131:.\main.c      ****             
+ 132:.\main.c      ****             if(counts[3] < counts[0]) { degs = -degs + 10; }
+ 673              		.loc 1 132 0
+ 674 0384 40F20003 		movw	r3, #:lower16:counts
+ 675 0388 C0F20003 		movt	r3, #:upper16:counts
+ 676 038c DA88     		ldrh	r2, [r3, #6]
+ 677 038e 40F20003 		movw	r3, #:lower16:counts
+ 678 0392 C0F20003 		movt	r3, #:upper16:counts
+ 679 0396 1B88     		ldrh	r3, [r3, #0]
+ 680 0398 9A42     		cmp	r2, r3
+ 681 039a 05D2     		bcs	.L23
+ 682 039c 1248     		ldr	r0, .L26+32	@ float
+ 683 039e 7968     		ldr	r1, [r7, #4]	@ float
+ 684 03a0 FFF7FEFF 		bl	__aeabi_fsub
+ 685 03a4 0346     		mov	r3, r0
+ 686 03a6 7B60     		str	r3, [r7, #4]	@ float
+ 687              	.L23:
+ 133:.\main.c      ****             
+ 134:.\main.c      ****             degs = degs + 270;
+ 688              		.loc 1 134 0
+ 689 03a8 7868     		ldr	r0, [r7, #4]	@ float
+ 690 03aa 1049     		ldr	r1, .L26+36	@ float
+ 691 03ac FFF7FEFF 		bl	__aeabi_fadd
+ 692 03b0 0346     		mov	r3, r0
+ 693 03b2 7B60     		str	r3, [r7, #4]	@ float
+ 694 03b4 00E0     		b	.L14
+ 695              	.L25:
+ 696              		.loc 1 102 0
+ 697 03b6 00BF     		nop
+ 698              	.L14:
+ 135:.\main.c      ****         break;
+ 136:.\main.c      ****     }
+ 137:.\main.c      ****     
+ 138:.\main.c      ****     return degs;
+ 699              		.loc 1 138 0
+ 700 03b8 7B68     		ldr	r3, [r7, #4]	@ float
+ 139:.\main.c      **** }
+ 701              		.loc 1 139 0
+ 702 03ba 1846     		mov	r0, r3
+ 703 03bc 07F11007 		add	r7, r7, #16
+ 704 03c0 BD46     		mov	sp, r7
+ 705 03c2 80BD     		pop	{r7, pc}
+ 706              	.L27:
+ 707 03c4 AFF30080 		.align	3
+ 708              	.L26:
+ 709 03c8 00000000 		.word	0
+ 710 03cc 00806640 		.word	1080459264
+ 711 03d0 EA2E4454 		.word	1413754602
+ 712 03d4 FB210940 		.word	1074340347
+ARM GAS  C:\Users\Chrispy\AppData\Local\Temp\cci7J7Xo.s 			page 16
+
+
+ 713 03d8 00000000 		.word	0
+ 714 03dc 0080B343 		.word	1135837184
+ 715 03e0 0000B442 		.word	1119092736
+ 716 03e4 00003443 		.word	1127481344
+ 717 03e8 00002041 		.word	1092616192
+ 718 03ec 00008743 		.word	1132920832
+ 719              		.cfi_endproc
+ 720              	.LFE31:
+ 721              		.size	Calc_Degs, .-Calc_Degs
+ 722              		.global	__aeabi_fmul
+ 723              		.global	__aeabi_f2uiz
+ 724              		.section	.text.Output_Data,"ax",%progbits
+ 725              		.align	2
+ 726              		.global	Output_Data
+ 727              		.thumb
+ 728              		.thumb_func
+ 729              		.type	Output_Data, %function
+ 730              	Output_Data:
+ 731              	.LFB32:
+ 140:.\main.c      **** 
+ 141:.\main.c      **** void Output_Data(float degs) {
+ 732              		.loc 1 141 0
+ 733              		.cfi_startproc
+ 734              		@ args = 0, pretend = 0, frame = 8
+ 735              		@ frame_needed = 1, uses_anonymous_args = 0
+ 736 0000 80B5     		push	{r7, lr}
+ 737              	.LCFI8:
+ 738              		.cfi_def_cfa_offset 8
+ 739 0002 82B0     		sub	sp, sp, #8
+ 740              	.LCFI9:
+ 741              		.cfi_def_cfa_offset 16
+ 742 0004 00AF     		add	r7, sp, #0
+ 743              		.cfi_offset 14, -4
+ 744              		.cfi_offset 7, -8
+ 745              	.LCFI10:
+ 746              		.cfi_def_cfa_register 7
+ 747 0006 7860     		str	r0, [r7, #4]	@ float
+ 142:.\main.c      ****     VDAC8_1_SetValue((195 * degs) / 359);
+ 748              		.loc 1 142 0
+ 749 0008 7868     		ldr	r0, [r7, #4]	@ float
+ 750 000a 3649     		ldr	r1, .L30	@ float
+ 751 000c FFF7FEFF 		bl	__aeabi_fmul
+ 752 0010 0346     		mov	r3, r0
+ 753 0012 1846     		mov	r0, r3
+ 754 0014 3449     		ldr	r1, .L30+4	@ float
+ 755 0016 FFF7FEFF 		bl	__aeabi_fdiv
+ 756 001a 0346     		mov	r3, r0
+ 757 001c 1846     		mov	r0, r3
+ 758 001e FFF7FEFF 		bl	__aeabi_f2uiz
+ 759 0022 0346     		mov	r3, r0
+ 760 0024 DBB2     		uxtb	r3, r3
+ 761 0026 1846     		mov	r0, r3
+ 762 0028 FFF7FEFF 		bl	VDAC8_1_SetValue
+ 143:.\main.c      ****     
+ 144:.\main.c      ****     LCD_Char_1_ClearDisplay();
+ 763              		.loc 1 144 0
+ 764 002c 4FF00100 		mov	r0, #1
+ARM GAS  C:\Users\Chrispy\AppData\Local\Temp\cci7J7Xo.s 			page 17
+
+
+ 765 0030 FFF7FEFF 		bl	LCD_Char_1_WriteControl
+ 145:.\main.c      ****     LCD_Char_1_Position(0,12);
+ 766              		.loc 1 145 0
+ 767 0034 4FF00000 		mov	r0, #0
+ 768 0038 4FF00C01 		mov	r1, #12
+ 769 003c FFF7FEFF 		bl	LCD_Char_1_Position
+ 146:.\main.c      ****     LCD_Char_1_PrintNumber(chan);
+ 770              		.loc 1 146 0
+ 771 0040 40F20003 		movw	r3, #:lower16:chan
+ 772 0044 C0F20003 		movt	r3, #:upper16:chan
+ 773 0048 1B78     		ldrb	r3, [r3, #0]	@ zero_extendqisi2
+ 774 004a 1846     		mov	r0, r3
+ 775 004c FFF7FEFF 		bl	LCD_Char_1_PrintNumber
+ 147:.\main.c      ****     LCD_Char_1_Position(0,0);
+ 776              		.loc 1 147 0
+ 777 0050 4FF00000 		mov	r0, #0
+ 778 0054 4FF00001 		mov	r1, #0
+ 779 0058 FFF7FEFF 		bl	LCD_Char_1_Position
+ 148:.\main.c      ****     LCD_Char_1_PrintNumber(counts[0]);
+ 780              		.loc 1 148 0
+ 781 005c 40F20003 		movw	r3, #:lower16:counts
+ 782 0060 C0F20003 		movt	r3, #:upper16:counts
+ 783 0064 1B88     		ldrh	r3, [r3, #0]
+ 784 0066 1846     		mov	r0, r3
+ 785 0068 FFF7FEFF 		bl	LCD_Char_1_PrintNumber
+ 149:.\main.c      ****     LCD_Char_1_Position(0,6);
+ 786              		.loc 1 149 0
+ 787 006c 4FF00000 		mov	r0, #0
+ 788 0070 4FF00601 		mov	r1, #6
+ 789 0074 FFF7FEFF 		bl	LCD_Char_1_Position
+ 150:.\main.c      ****     LCD_Char_1_PrintNumber(counts[1]);
+ 790              		.loc 1 150 0
+ 791 0078 40F20003 		movw	r3, #:lower16:counts
+ 792 007c C0F20003 		movt	r3, #:upper16:counts
+ 793 0080 5B88     		ldrh	r3, [r3, #2]
+ 794 0082 1846     		mov	r0, r3
+ 795 0084 FFF7FEFF 		bl	LCD_Char_1_PrintNumber
+ 151:.\main.c      ****     LCD_Char_1_Position(1,0);
+ 796              		.loc 1 151 0
+ 797 0088 4FF00100 		mov	r0, #1
+ 798 008c 4FF00001 		mov	r1, #0
+ 799 0090 FFF7FEFF 		bl	LCD_Char_1_Position
+ 152:.\main.c      ****     LCD_Char_1_PrintNumber(counts[2]);
+ 800              		.loc 1 152 0
+ 801 0094 40F20003 		movw	r3, #:lower16:counts
+ 802 0098 C0F20003 		movt	r3, #:upper16:counts
+ 803 009c 9B88     		ldrh	r3, [r3, #4]
+ 804 009e 1846     		mov	r0, r3
+ 805 00a0 FFF7FEFF 		bl	LCD_Char_1_PrintNumber
+ 153:.\main.c      ****     LCD_Char_1_Position(1,6);
+ 806              		.loc 1 153 0
+ 807 00a4 4FF00100 		mov	r0, #1
+ 808 00a8 4FF00601 		mov	r1, #6
+ 809 00ac FFF7FEFF 		bl	LCD_Char_1_Position
+ 154:.\main.c      ****     LCD_Char_1_PrintNumber(counts[3]);
+ 810              		.loc 1 154 0
+ 811 00b0 40F20003 		movw	r3, #:lower16:counts
+ARM GAS  C:\Users\Chrispy\AppData\Local\Temp\cci7J7Xo.s 			page 18
+
+
+ 812 00b4 C0F20003 		movt	r3, #:upper16:counts
+ 813 00b8 DB88     		ldrh	r3, [r3, #6]
+ 814 00ba 1846     		mov	r0, r3
+ 815 00bc FFF7FEFF 		bl	LCD_Char_1_PrintNumber
+ 155:.\main.c      ****     LCD_Char_1_Position(1,12);
+ 816              		.loc 1 155 0
+ 817 00c0 4FF00100 		mov	r0, #1
+ 818 00c4 4FF00C01 		mov	r1, #12
+ 819 00c8 FFF7FEFF 		bl	LCD_Char_1_Position
+ 156:.\main.c      ****     LCD_Char_1_PrintNumber(degs);
+ 820              		.loc 1 156 0
+ 821 00cc 7868     		ldr	r0, [r7, #4]	@ float
+ 822 00ce FFF7FEFF 		bl	__aeabi_f2uiz
+ 823 00d2 0346     		mov	r3, r0
+ 824 00d4 9BB2     		uxth	r3, r3
+ 825 00d6 1846     		mov	r0, r3
+ 826 00d8 FFF7FEFF 		bl	LCD_Char_1_PrintNumber
+ 157:.\main.c      **** }
+ 827              		.loc 1 157 0
+ 828 00dc 07F10807 		add	r7, r7, #8
+ 829 00e0 BD46     		mov	sp, r7
+ 830 00e2 80BD     		pop	{r7, pc}
+ 831              	.L31:
+ 832              		.align	2
+ 833              	.L30:
+ 834 00e4 00004343 		.word	1128464384
+ 835 00e8 0080B343 		.word	1135837184
+ 836              		.cfi_endproc
+ 837              	.LFE32:
+ 838              		.size	Output_Data, .-Output_Data
+ 839              		.text
+ 840              	.Letext0:
+ 841              		.section	.debug_loc,"",%progbits
+ 842              	.Ldebug_loc0:
+ 843              	.LLST0:
+ 844 0000 00000000 		.4byte	.LFB29
+ 845 0004 02000000 		.4byte	.LCFI0
+ 846 0008 0100     		.2byte	0x1
+ 847 000a 5D       		.byte	0x5d
+ 848 000b 02000000 		.4byte	.LCFI0
+ 849 000f 04000000 		.4byte	.LCFI1
+ 850 0013 0200     		.2byte	0x2
+ 851 0015 7D       		.byte	0x7d
+ 852 0016 08       		.sleb128 8
+ 853 0017 04000000 		.4byte	.LCFI1
+ 854 001b E8000000 		.4byte	.LFE29
+ 855 001f 0200     		.2byte	0x2
+ 856 0021 77       		.byte	0x77
+ 857 0022 08       		.sleb128 8
+ 858 0023 00000000 		.4byte	0x0
+ 859 0027 00000000 		.4byte	0x0
+ 860              	.LLST1:
+ 861 002b 00000000 		.4byte	.LFB30
+ 862 002f 02000000 		.4byte	.LCFI2
+ 863 0033 0100     		.2byte	0x1
+ 864 0035 5D       		.byte	0x5d
+ 865 0036 02000000 		.4byte	.LCFI2
+ARM GAS  C:\Users\Chrispy\AppData\Local\Temp\cci7J7Xo.s 			page 19
+
+
+ 866 003a 04000000 		.4byte	.LCFI3
+ 867 003e 0200     		.2byte	0x2
+ 868 0040 7D       		.byte	0x7d
+ 869 0041 0C       		.sleb128 12
+ 870 0042 04000000 		.4byte	.LCFI3
+ 871 0046 06000000 		.4byte	.LCFI4
+ 872 004a 0200     		.2byte	0x2
+ 873 004c 7D       		.byte	0x7d
+ 874 004d 18       		.sleb128 24
+ 875 004e 06000000 		.4byte	.LCFI4
+ 876 0052 22010000 		.4byte	.LFE30
+ 877 0056 0200     		.2byte	0x2
+ 878 0058 77       		.byte	0x77
+ 879 0059 18       		.sleb128 24
+ 880 005a 00000000 		.4byte	0x0
+ 881 005e 00000000 		.4byte	0x0
+ 882              	.LLST2:
+ 883 0062 00000000 		.4byte	.LFB31
+ 884 0066 02000000 		.4byte	.LCFI5
+ 885 006a 0100     		.2byte	0x1
+ 886 006c 5D       		.byte	0x5d
+ 887 006d 02000000 		.4byte	.LCFI5
+ 888 0071 04000000 		.4byte	.LCFI6
+ 889 0075 0200     		.2byte	0x2
+ 890 0077 7D       		.byte	0x7d
+ 891 0078 08       		.sleb128 8
+ 892 0079 04000000 		.4byte	.LCFI6
+ 893 007d 06000000 		.4byte	.LCFI7
+ 894 0081 0200     		.2byte	0x2
+ 895 0083 7D       		.byte	0x7d
+ 896 0084 18       		.sleb128 24
+ 897 0085 06000000 		.4byte	.LCFI7
+ 898 0089 F0030000 		.4byte	.LFE31
+ 899 008d 0200     		.2byte	0x2
+ 900 008f 77       		.byte	0x77
+ 901 0090 18       		.sleb128 24
+ 902 0091 00000000 		.4byte	0x0
+ 903 0095 00000000 		.4byte	0x0
+ 904              	.LLST3:
+ 905 0099 00000000 		.4byte	.LFB32
+ 906 009d 02000000 		.4byte	.LCFI8
+ 907 00a1 0100     		.2byte	0x1
+ 908 00a3 5D       		.byte	0x5d
+ 909 00a4 02000000 		.4byte	.LCFI8
+ 910 00a8 04000000 		.4byte	.LCFI9
+ 911 00ac 0200     		.2byte	0x2
+ 912 00ae 7D       		.byte	0x7d
+ 913 00af 08       		.sleb128 8
+ 914 00b0 04000000 		.4byte	.LCFI9
+ 915 00b4 06000000 		.4byte	.LCFI10
+ 916 00b8 0200     		.2byte	0x2
+ 917 00ba 7D       		.byte	0x7d
+ 918 00bb 10       		.sleb128 16
+ 919 00bc 06000000 		.4byte	.LCFI10
+ 920 00c0 EC000000 		.4byte	.LFE32
+ 921 00c4 0200     		.2byte	0x2
+ 922 00c6 77       		.byte	0x77
+ARM GAS  C:\Users\Chrispy\AppData\Local\Temp\cci7J7Xo.s 			page 20
+
+
+ 923 00c7 10       		.sleb128 16
+ 924 00c8 00000000 		.4byte	0x0
+ 925 00cc 00000000 		.4byte	0x0
+ 926              		.file 2 "./Generated_Source/PSoC5/cytypes.h"
+ 927              		.file 3 "./Generated_Source/PSoC5/core_cm3.h"
+ 928              		.section	.debug_info
+ 929 0000 B0010000 		.4byte	0x1b0
+ 930 0004 0200     		.2byte	0x2
+ 931 0006 00000000 		.4byte	.Ldebug_abbrev0
+ 932 000a 04       		.byte	0x4
+ 933 000b 01       		.uleb128 0x1
+ 934 000c 1F010000 		.4byte	.LASF24
+ 935 0010 01       		.byte	0x1
+ 936 0011 39000000 		.4byte	.LASF25
+ 937 0015 74000000 		.4byte	.LASF26
+ 938 0019 00000000 		.4byte	0x0
+ 939 001d 00000000 		.4byte	0x0
+ 940 0021 00000000 		.4byte	.Ldebug_ranges0+0x0
+ 941 0025 00000000 		.4byte	.Ldebug_line0
+ 942 0029 02       		.uleb128 0x2
+ 943 002a 01       		.byte	0x1
+ 944 002b 06       		.byte	0x6
+ 945 002c 55010000 		.4byte	.LASF0
+ 946 0030 02       		.uleb128 0x2
+ 947 0031 01       		.byte	0x1
+ 948 0032 08       		.byte	0x8
+ 949 0033 2B000000 		.4byte	.LASF1
+ 950 0037 02       		.uleb128 0x2
+ 951 0038 02       		.byte	0x2
+ 952 0039 05       		.byte	0x5
+ 953 003a 30010000 		.4byte	.LASF2
+ 954 003e 02       		.uleb128 0x2
+ 955 003f 02       		.byte	0x2
+ 956 0040 07       		.byte	0x7
+ 957 0041 54000000 		.4byte	.LASF3
+ 958 0045 02       		.uleb128 0x2
+ 959 0046 04       		.byte	0x4
+ 960 0047 05       		.byte	0x5
+ 961 0048 40010000 		.4byte	.LASF4
+ 962 004c 02       		.uleb128 0x2
+ 963 004d 04       		.byte	0x4
+ 964 004e 07       		.byte	0x7
+ 965 004f 42000000 		.4byte	.LASF5
+ 966 0053 02       		.uleb128 0x2
+ 967 0054 08       		.byte	0x8
+ 968 0055 05       		.byte	0x5
+ 969 0056 00000000 		.4byte	.LASF6
+ 970 005a 02       		.uleb128 0x2
+ 971 005b 08       		.byte	0x8
+ 972 005c 07       		.byte	0x7
+ 973 005d F3000000 		.4byte	.LASF7
+ 974 0061 03       		.uleb128 0x3
+ 975 0062 04       		.byte	0x4
+ 976 0063 05       		.byte	0x5
+ 977 0064 696E7400 		.ascii	"int\000"
+ 978 0068 02       		.uleb128 0x2
+ 979 0069 04       		.byte	0x4
+ARM GAS  C:\Users\Chrispy\AppData\Local\Temp\cci7J7Xo.s 			page 21
+
+
+ 980 006a 07       		.byte	0x7
+ 981 006b DF000000 		.4byte	.LASF8
+ 982 006f 04       		.uleb128 0x4
+ 983 0070 3A010000 		.4byte	.LASF9
+ 984 0074 02       		.byte	0x2
+ 985 0075 4C       		.byte	0x4c
+ 986 0076 30000000 		.4byte	0x30
+ 987 007a 04       		.uleb128 0x4
+ 988 007b D3000000 		.4byte	.LASF10
+ 989 007f 02       		.byte	0x2
+ 990 0080 4D       		.byte	0x4d
+ 991 0081 3E000000 		.4byte	0x3e
+ 992 0085 02       		.uleb128 0x2
+ 993 0086 04       		.byte	0x4
+ 994 0087 04       		.byte	0x4
+ 995 0088 25000000 		.4byte	.LASF11
+ 996 008c 02       		.uleb128 0x2
+ 997 008d 08       		.byte	0x8
+ 998 008e 04       		.byte	0x4
+ 999 008f C0000000 		.4byte	.LASF12
+ 1000 0093 02       		.uleb128 0x2
+ 1001 0094 01       		.byte	0x1
+ 1002 0095 08       		.byte	0x8
+ 1003 0096 2B010000 		.4byte	.LASF13
+ 1004 009a 05       		.uleb128 0x5
+ 1005 009b 04       		.byte	0x4
+ 1006 009c 07       		.byte	0x7
+ 1007 009d 02       		.uleb128 0x2
+ 1008 009e 08       		.byte	0x8
+ 1009 009f 04       		.byte	0x4
+ 1010 00a0 49010000 		.4byte	.LASF14
+ 1011 00a4 06       		.uleb128 0x6
+ 1012 00a5 01       		.byte	0x1
+ 1013 00a6 DA000000 		.4byte	.LASF27
+ 1014 00aa 01       		.byte	0x1
+ 1015 00ab 12       		.byte	0x12
+ 1016 00ac 00000000 		.4byte	.LFB29
+ 1017 00b0 E8000000 		.4byte	.LFE29
+ 1018 00b4 00000000 		.4byte	.LLST0
+ 1019 00b8 07       		.uleb128 0x7
+ 1020 00b9 01       		.byte	0x1
+ 1021 00ba 0A010000 		.4byte	.LASF28
+ 1022 00be 01       		.byte	0x1
+ 1023 00bf 42       		.byte	0x42
+ 1024 00c0 00000000 		.4byte	.LFB30
+ 1025 00c4 22010000 		.4byte	.LFE30
+ 1026 00c8 2B000000 		.4byte	.LLST1
+ 1027 00cc DF000000 		.4byte	0xdf
+ 1028 00d0 08       		.uleb128 0x8
+ 1029 00d1 18000000 		.4byte	.LASF15
+ 1030 00d5 01       		.byte	0x1
+ 1031 00d6 47       		.byte	0x47
+ 1032 00d7 6F000000 		.4byte	0x6f
+ 1033 00db 02       		.byte	0x2
+ 1034 00dc 91       		.byte	0x91
+ 1035 00dd 6F       		.sleb128 -17
+ 1036 00de 00       		.byte	0x0
+ARM GAS  C:\Users\Chrispy\AppData\Local\Temp\cci7J7Xo.s 			page 22
+
+
+ 1037 00df 09       		.uleb128 0x9
+ 1038 00e0 01       		.byte	0x1
+ 1039 00e1 0E000000 		.4byte	.LASF18
+ 1040 00e5 01       		.byte	0x1
+ 1041 00e6 55       		.byte	0x55
+ 1042 00e7 85000000 		.4byte	0x85
+ 1043 00eb 00000000 		.4byte	.LFB31
+ 1044 00ef F0030000 		.4byte	.LFE31
+ 1045 00f3 62000000 		.4byte	.LLST2
+ 1046 00f7 32010000 		.4byte	0x132
+ 1047 00fb 0A       		.uleb128 0xa
+ 1048 00fc 6900     		.ascii	"i\000"
+ 1049 00fe 01       		.byte	0x1
+ 1050 00ff 56       		.byte	0x56
+ 1051 0100 6F000000 		.4byte	0x6f
+ 1052 0104 02       		.byte	0x2
+ 1053 0105 91       		.byte	0x91
+ 1054 0106 6B       		.sleb128 -21
+ 1055 0107 08       		.uleb128 0x8
+ 1056 0108 61010000 		.4byte	.LASF16
+ 1057 010c 01       		.byte	0x1
+ 1058 010d 5B       		.byte	0x5b
+ 1059 010e 85000000 		.4byte	0x85
+ 1060 0112 02       		.byte	0x2
+ 1061 0113 91       		.byte	0x91
+ 1062 0114 6C       		.sleb128 -20
+ 1063 0115 0A       		.uleb128 0xa
+ 1064 0116 6D696400 		.ascii	"mid\000"
+ 1065 011a 01       		.byte	0x1
+ 1066 011b 5C       		.byte	0x5c
+ 1067 011c 85000000 		.4byte	0x85
+ 1068 0120 02       		.byte	0x2
+ 1069 0121 91       		.byte	0x91
+ 1070 0122 70       		.sleb128 -16
+ 1071 0123 08       		.uleb128 0x8
+ 1072 0124 1A010000 		.4byte	.LASF17
+ 1073 0128 01       		.byte	0x1
+ 1074 0129 5D       		.byte	0x5d
+ 1075 012a 85000000 		.4byte	0x85
+ 1076 012e 02       		.byte	0x2
+ 1077 012f 91       		.byte	0x91
+ 1078 0130 74       		.sleb128 -12
+ 1079 0131 00       		.byte	0x0
+ 1080 0132 0B       		.uleb128 0xb
+ 1081 0133 01       		.byte	0x1
+ 1082 0134 C7000000 		.4byte	.LASF19
+ 1083 0138 01       		.byte	0x1
+ 1084 0139 8D       		.byte	0x8d
+ 1085 013a 01       		.byte	0x1
+ 1086 013b 00000000 		.4byte	.LFB32
+ 1087 013f EC000000 		.4byte	.LFE32
+ 1088 0143 99000000 		.4byte	.LLST3
+ 1089 0147 5A010000 		.4byte	0x15a
+ 1090 014b 0C       		.uleb128 0xc
+ 1091 014c 61010000 		.4byte	.LASF16
+ 1092 0150 01       		.byte	0x1
+ 1093 0151 8D       		.byte	0x8d
+ARM GAS  C:\Users\Chrispy\AppData\Local\Temp\cci7J7Xo.s 			page 23
+
+
+ 1094 0152 85000000 		.4byte	0x85
+ 1095 0156 02       		.byte	0x2
+ 1096 0157 91       		.byte	0x91
+ 1097 0158 74       		.sleb128 -12
+ 1098 0159 00       		.byte	0x0
+ 1099 015a 0D       		.uleb128 0xd
+ 1100 015b 67000000 		.4byte	.LASF20
+ 1101 015f 03       		.byte	0x3
+ 1102 0160 CE06     		.2byte	0x6ce
+ 1103 0162 68010000 		.4byte	0x168
+ 1104 0166 01       		.byte	0x1
+ 1105 0167 01       		.byte	0x1
+ 1106 0168 0E       		.uleb128 0xe
+ 1107 0169 61000000 		.4byte	0x61
+ 1108 016d 0F       		.uleb128 0xf
+ 1109 016e 7A000000 		.4byte	0x7a
+ 1110 0172 7D010000 		.4byte	0x17d
+ 1111 0176 10       		.uleb128 0x10
+ 1112 0177 9A000000 		.4byte	0x9a
+ 1113 017b 03       		.byte	0x3
+ 1114 017c 00       		.byte	0x0
+ 1115 017d 11       		.uleb128 0x11
+ 1116 017e EC000000 		.4byte	.LASF21
+ 1117 0182 01       		.byte	0x1
+ 1118 0183 08       		.byte	0x8
+ 1119 0184 6D010000 		.4byte	0x16d
+ 1120 0188 01       		.byte	0x1
+ 1121 0189 05       		.byte	0x5
+ 1122 018a 03       		.byte	0x3
+ 1123 018b 00000000 		.4byte	counts
+ 1124 018f 11       		.uleb128 0x11
+ 1125 0190 15010000 		.4byte	.LASF22
+ 1126 0194 01       		.byte	0x1
+ 1127 0195 09       		.byte	0x9
+ 1128 0196 6F000000 		.4byte	0x6f
+ 1129 019a 01       		.byte	0x1
+ 1130 019b 05       		.byte	0x5
+ 1131 019c 03       		.byte	0x3
+ 1132 019d 00000000 		.4byte	chan
+ 1133 01a1 11       		.uleb128 0x11
+ 1134 01a2 1E000000 		.4byte	.LASF23
+ 1135 01a6 01       		.byte	0x1
+ 1136 01a7 0A       		.byte	0xa
+ 1137 01a8 6F000000 		.4byte	0x6f
+ 1138 01ac 01       		.byte	0x1
+ 1139 01ad 05       		.byte	0x5
+ 1140 01ae 03       		.byte	0x3
+ 1141 01af 00000000 		.4byte	sample
+ 1142 01b3 00       		.byte	0x0
+ 1143              		.section	.debug_abbrev
+ 1144 0000 01       		.uleb128 0x1
+ 1145 0001 11       		.uleb128 0x11
+ 1146 0002 01       		.byte	0x1
+ 1147 0003 25       		.uleb128 0x25
+ 1148 0004 0E       		.uleb128 0xe
+ 1149 0005 13       		.uleb128 0x13
+ 1150 0006 0B       		.uleb128 0xb
+ARM GAS  C:\Users\Chrispy\AppData\Local\Temp\cci7J7Xo.s 			page 24
+
+
+ 1151 0007 03       		.uleb128 0x3
+ 1152 0008 0E       		.uleb128 0xe
+ 1153 0009 1B       		.uleb128 0x1b
+ 1154 000a 0E       		.uleb128 0xe
+ 1155 000b 11       		.uleb128 0x11
+ 1156 000c 01       		.uleb128 0x1
+ 1157 000d 52       		.uleb128 0x52
+ 1158 000e 01       		.uleb128 0x1
+ 1159 000f 55       		.uleb128 0x55
+ 1160 0010 06       		.uleb128 0x6
+ 1161 0011 10       		.uleb128 0x10
+ 1162 0012 06       		.uleb128 0x6
+ 1163 0013 00       		.byte	0x0
+ 1164 0014 00       		.byte	0x0
+ 1165 0015 02       		.uleb128 0x2
+ 1166 0016 24       		.uleb128 0x24
+ 1167 0017 00       		.byte	0x0
+ 1168 0018 0B       		.uleb128 0xb
+ 1169 0019 0B       		.uleb128 0xb
+ 1170 001a 3E       		.uleb128 0x3e
+ 1171 001b 0B       		.uleb128 0xb
+ 1172 001c 03       		.uleb128 0x3
+ 1173 001d 0E       		.uleb128 0xe
+ 1174 001e 00       		.byte	0x0
+ 1175 001f 00       		.byte	0x0
+ 1176 0020 03       		.uleb128 0x3
+ 1177 0021 24       		.uleb128 0x24
+ 1178 0022 00       		.byte	0x0
+ 1179 0023 0B       		.uleb128 0xb
+ 1180 0024 0B       		.uleb128 0xb
+ 1181 0025 3E       		.uleb128 0x3e
+ 1182 0026 0B       		.uleb128 0xb
+ 1183 0027 03       		.uleb128 0x3
+ 1184 0028 08       		.uleb128 0x8
+ 1185 0029 00       		.byte	0x0
+ 1186 002a 00       		.byte	0x0
+ 1187 002b 04       		.uleb128 0x4
+ 1188 002c 16       		.uleb128 0x16
+ 1189 002d 00       		.byte	0x0
+ 1190 002e 03       		.uleb128 0x3
+ 1191 002f 0E       		.uleb128 0xe
+ 1192 0030 3A       		.uleb128 0x3a
+ 1193 0031 0B       		.uleb128 0xb
+ 1194 0032 3B       		.uleb128 0x3b
+ 1195 0033 0B       		.uleb128 0xb
+ 1196 0034 49       		.uleb128 0x49
+ 1197 0035 13       		.uleb128 0x13
+ 1198 0036 00       		.byte	0x0
+ 1199 0037 00       		.byte	0x0
+ 1200 0038 05       		.uleb128 0x5
+ 1201 0039 24       		.uleb128 0x24
+ 1202 003a 00       		.byte	0x0
+ 1203 003b 0B       		.uleb128 0xb
+ 1204 003c 0B       		.uleb128 0xb
+ 1205 003d 3E       		.uleb128 0x3e
+ 1206 003e 0B       		.uleb128 0xb
+ 1207 003f 00       		.byte	0x0
+ARM GAS  C:\Users\Chrispy\AppData\Local\Temp\cci7J7Xo.s 			page 25
+
+
+ 1208 0040 00       		.byte	0x0
+ 1209 0041 06       		.uleb128 0x6
+ 1210 0042 2E       		.uleb128 0x2e
+ 1211 0043 00       		.byte	0x0
+ 1212 0044 3F       		.uleb128 0x3f
+ 1213 0045 0C       		.uleb128 0xc
+ 1214 0046 03       		.uleb128 0x3
+ 1215 0047 0E       		.uleb128 0xe
+ 1216 0048 3A       		.uleb128 0x3a
+ 1217 0049 0B       		.uleb128 0xb
+ 1218 004a 3B       		.uleb128 0x3b
+ 1219 004b 0B       		.uleb128 0xb
+ 1220 004c 11       		.uleb128 0x11
+ 1221 004d 01       		.uleb128 0x1
+ 1222 004e 12       		.uleb128 0x12
+ 1223 004f 01       		.uleb128 0x1
+ 1224 0050 40       		.uleb128 0x40
+ 1225 0051 06       		.uleb128 0x6
+ 1226 0052 00       		.byte	0x0
+ 1227 0053 00       		.byte	0x0
+ 1228 0054 07       		.uleb128 0x7
+ 1229 0055 2E       		.uleb128 0x2e
+ 1230 0056 01       		.byte	0x1
+ 1231 0057 3F       		.uleb128 0x3f
+ 1232 0058 0C       		.uleb128 0xc
+ 1233 0059 03       		.uleb128 0x3
+ 1234 005a 0E       		.uleb128 0xe
+ 1235 005b 3A       		.uleb128 0x3a
+ 1236 005c 0B       		.uleb128 0xb
+ 1237 005d 3B       		.uleb128 0x3b
+ 1238 005e 0B       		.uleb128 0xb
+ 1239 005f 11       		.uleb128 0x11
+ 1240 0060 01       		.uleb128 0x1
+ 1241 0061 12       		.uleb128 0x12
+ 1242 0062 01       		.uleb128 0x1
+ 1243 0063 40       		.uleb128 0x40
+ 1244 0064 06       		.uleb128 0x6
+ 1245 0065 01       		.uleb128 0x1
+ 1246 0066 13       		.uleb128 0x13
+ 1247 0067 00       		.byte	0x0
+ 1248 0068 00       		.byte	0x0
+ 1249 0069 08       		.uleb128 0x8
+ 1250 006a 34       		.uleb128 0x34
+ 1251 006b 00       		.byte	0x0
+ 1252 006c 03       		.uleb128 0x3
+ 1253 006d 0E       		.uleb128 0xe
+ 1254 006e 3A       		.uleb128 0x3a
+ 1255 006f 0B       		.uleb128 0xb
+ 1256 0070 3B       		.uleb128 0x3b
+ 1257 0071 0B       		.uleb128 0xb
+ 1258 0072 49       		.uleb128 0x49
+ 1259 0073 13       		.uleb128 0x13
+ 1260 0074 02       		.uleb128 0x2
+ 1261 0075 0A       		.uleb128 0xa
+ 1262 0076 00       		.byte	0x0
+ 1263 0077 00       		.byte	0x0
+ 1264 0078 09       		.uleb128 0x9
+ARM GAS  C:\Users\Chrispy\AppData\Local\Temp\cci7J7Xo.s 			page 26
+
+
+ 1265 0079 2E       		.uleb128 0x2e
+ 1266 007a 01       		.byte	0x1
+ 1267 007b 3F       		.uleb128 0x3f
+ 1268 007c 0C       		.uleb128 0xc
+ 1269 007d 03       		.uleb128 0x3
+ 1270 007e 0E       		.uleb128 0xe
+ 1271 007f 3A       		.uleb128 0x3a
+ 1272 0080 0B       		.uleb128 0xb
+ 1273 0081 3B       		.uleb128 0x3b
+ 1274 0082 0B       		.uleb128 0xb
+ 1275 0083 49       		.uleb128 0x49
+ 1276 0084 13       		.uleb128 0x13
+ 1277 0085 11       		.uleb128 0x11
+ 1278 0086 01       		.uleb128 0x1
+ 1279 0087 12       		.uleb128 0x12
+ 1280 0088 01       		.uleb128 0x1
+ 1281 0089 40       		.uleb128 0x40
+ 1282 008a 06       		.uleb128 0x6
+ 1283 008b 01       		.uleb128 0x1
+ 1284 008c 13       		.uleb128 0x13
+ 1285 008d 00       		.byte	0x0
+ 1286 008e 00       		.byte	0x0
+ 1287 008f 0A       		.uleb128 0xa
+ 1288 0090 34       		.uleb128 0x34
+ 1289 0091 00       		.byte	0x0
+ 1290 0092 03       		.uleb128 0x3
+ 1291 0093 08       		.uleb128 0x8
+ 1292 0094 3A       		.uleb128 0x3a
+ 1293 0095 0B       		.uleb128 0xb
+ 1294 0096 3B       		.uleb128 0x3b
+ 1295 0097 0B       		.uleb128 0xb
+ 1296 0098 49       		.uleb128 0x49
+ 1297 0099 13       		.uleb128 0x13
+ 1298 009a 02       		.uleb128 0x2
+ 1299 009b 0A       		.uleb128 0xa
+ 1300 009c 00       		.byte	0x0
+ 1301 009d 00       		.byte	0x0
+ 1302 009e 0B       		.uleb128 0xb
+ 1303 009f 2E       		.uleb128 0x2e
+ 1304 00a0 01       		.byte	0x1
+ 1305 00a1 3F       		.uleb128 0x3f
+ 1306 00a2 0C       		.uleb128 0xc
+ 1307 00a3 03       		.uleb128 0x3
+ 1308 00a4 0E       		.uleb128 0xe
+ 1309 00a5 3A       		.uleb128 0x3a
+ 1310 00a6 0B       		.uleb128 0xb
+ 1311 00a7 3B       		.uleb128 0x3b
+ 1312 00a8 0B       		.uleb128 0xb
+ 1313 00a9 27       		.uleb128 0x27
+ 1314 00aa 0C       		.uleb128 0xc
+ 1315 00ab 11       		.uleb128 0x11
+ 1316 00ac 01       		.uleb128 0x1
+ 1317 00ad 12       		.uleb128 0x12
+ 1318 00ae 01       		.uleb128 0x1
+ 1319 00af 40       		.uleb128 0x40
+ 1320 00b0 06       		.uleb128 0x6
+ 1321 00b1 01       		.uleb128 0x1
+ARM GAS  C:\Users\Chrispy\AppData\Local\Temp\cci7J7Xo.s 			page 27
+
+
+ 1322 00b2 13       		.uleb128 0x13
+ 1323 00b3 00       		.byte	0x0
+ 1324 00b4 00       		.byte	0x0
+ 1325 00b5 0C       		.uleb128 0xc
+ 1326 00b6 05       		.uleb128 0x5
+ 1327 00b7 00       		.byte	0x0
+ 1328 00b8 03       		.uleb128 0x3
+ 1329 00b9 0E       		.uleb128 0xe
+ 1330 00ba 3A       		.uleb128 0x3a
+ 1331 00bb 0B       		.uleb128 0xb
+ 1332 00bc 3B       		.uleb128 0x3b
+ 1333 00bd 0B       		.uleb128 0xb
+ 1334 00be 49       		.uleb128 0x49
+ 1335 00bf 13       		.uleb128 0x13
+ 1336 00c0 02       		.uleb128 0x2
+ 1337 00c1 0A       		.uleb128 0xa
+ 1338 00c2 00       		.byte	0x0
+ 1339 00c3 00       		.byte	0x0
+ 1340 00c4 0D       		.uleb128 0xd
+ 1341 00c5 34       		.uleb128 0x34
+ 1342 00c6 00       		.byte	0x0
+ 1343 00c7 03       		.uleb128 0x3
+ 1344 00c8 0E       		.uleb128 0xe
+ 1345 00c9 3A       		.uleb128 0x3a
+ 1346 00ca 0B       		.uleb128 0xb
+ 1347 00cb 3B       		.uleb128 0x3b
+ 1348 00cc 05       		.uleb128 0x5
+ 1349 00cd 49       		.uleb128 0x49
+ 1350 00ce 13       		.uleb128 0x13
+ 1351 00cf 3F       		.uleb128 0x3f
+ 1352 00d0 0C       		.uleb128 0xc
+ 1353 00d1 3C       		.uleb128 0x3c
+ 1354 00d2 0C       		.uleb128 0xc
+ 1355 00d3 00       		.byte	0x0
+ 1356 00d4 00       		.byte	0x0
+ 1357 00d5 0E       		.uleb128 0xe
+ 1358 00d6 35       		.uleb128 0x35
+ 1359 00d7 00       		.byte	0x0
+ 1360 00d8 49       		.uleb128 0x49
+ 1361 00d9 13       		.uleb128 0x13
+ 1362 00da 00       		.byte	0x0
+ 1363 00db 00       		.byte	0x0
+ 1364 00dc 0F       		.uleb128 0xf
+ 1365 00dd 01       		.uleb128 0x1
+ 1366 00de 01       		.byte	0x1
+ 1367 00df 49       		.uleb128 0x49
+ 1368 00e0 13       		.uleb128 0x13
+ 1369 00e1 01       		.uleb128 0x1
+ 1370 00e2 13       		.uleb128 0x13
+ 1371 00e3 00       		.byte	0x0
+ 1372 00e4 00       		.byte	0x0
+ 1373 00e5 10       		.uleb128 0x10
+ 1374 00e6 21       		.uleb128 0x21
+ 1375 00e7 00       		.byte	0x0
+ 1376 00e8 49       		.uleb128 0x49
+ 1377 00e9 13       		.uleb128 0x13
+ 1378 00ea 2F       		.uleb128 0x2f
+ARM GAS  C:\Users\Chrispy\AppData\Local\Temp\cci7J7Xo.s 			page 28
+
+
+ 1379 00eb 0B       		.uleb128 0xb
+ 1380 00ec 00       		.byte	0x0
+ 1381 00ed 00       		.byte	0x0
+ 1382 00ee 11       		.uleb128 0x11
+ 1383 00ef 34       		.uleb128 0x34
+ 1384 00f0 00       		.byte	0x0
+ 1385 00f1 03       		.uleb128 0x3
+ 1386 00f2 0E       		.uleb128 0xe
+ 1387 00f3 3A       		.uleb128 0x3a
+ 1388 00f4 0B       		.uleb128 0xb
+ 1389 00f5 3B       		.uleb128 0x3b
+ 1390 00f6 0B       		.uleb128 0xb
+ 1391 00f7 49       		.uleb128 0x49
+ 1392 00f8 13       		.uleb128 0x13
+ 1393 00f9 3F       		.uleb128 0x3f
+ 1394 00fa 0C       		.uleb128 0xc
+ 1395 00fb 02       		.uleb128 0x2
+ 1396 00fc 0A       		.uleb128 0xa
+ 1397 00fd 00       		.byte	0x0
+ 1398 00fe 00       		.byte	0x0
+ 1399 00ff 00       		.byte	0x0
+ 1400              		.section	.debug_pubnames,"",%progbits
+ 1401 0000 63000000 		.4byte	0x63
+ 1402 0004 0200     		.2byte	0x2
+ 1403 0006 00000000 		.4byte	.Ldebug_info0
+ 1404 000a B4010000 		.4byte	0x1b4
+ 1405 000e A4000000 		.4byte	0xa4
+ 1406 0012 6D61696E 		.ascii	"main\000"
+ 1406      00
+ 1407 0017 B8000000 		.4byte	0xb8
+ 1408 001b 4765745F 		.ascii	"Get_Counts\000"
+ 1408      436F756E 
+ 1408      747300
+ 1409 0026 DF000000 		.4byte	0xdf
+ 1410 002a 43616C63 		.ascii	"Calc_Degs\000"
+ 1410      5F446567 
+ 1410      7300
+ 1411 0034 32010000 		.4byte	0x132
+ 1412 0038 4F757470 		.ascii	"Output_Data\000"
+ 1412      75745F44 
+ 1412      61746100 
+ 1413 0044 7D010000 		.4byte	0x17d
+ 1414 0048 636F756E 		.ascii	"counts\000"
+ 1414      747300
+ 1415 004f 8F010000 		.4byte	0x18f
+ 1416 0053 6368616E 		.ascii	"chan\000"
+ 1416      00
+ 1417 0058 A1010000 		.4byte	0x1a1
+ 1418 005c 73616D70 		.ascii	"sample\000"
+ 1418      6C6500
+ 1419 0063 00000000 		.4byte	0x0
+ 1420              		.section	.debug_aranges,"",%progbits
+ 1421 0000 34000000 		.4byte	0x34
+ 1422 0004 0200     		.2byte	0x2
+ 1423 0006 00000000 		.4byte	.Ldebug_info0
+ 1424 000a 04       		.byte	0x4
+ 1425 000b 00       		.byte	0x0
+ARM GAS  C:\Users\Chrispy\AppData\Local\Temp\cci7J7Xo.s 			page 29
+
+
+ 1426 000c 0000     		.2byte	0x0
+ 1427 000e 0000     		.2byte	0x0
+ 1428 0010 00000000 		.4byte	.LFB29
+ 1429 0014 E8000000 		.4byte	.LFE29-.LFB29
+ 1430 0018 00000000 		.4byte	.LFB30
+ 1431 001c 22010000 		.4byte	.LFE30-.LFB30
+ 1432 0020 00000000 		.4byte	.LFB31
+ 1433 0024 F0030000 		.4byte	.LFE31-.LFB31
+ 1434 0028 00000000 		.4byte	.LFB32
+ 1435 002c EC000000 		.4byte	.LFE32-.LFB32
+ 1436 0030 00000000 		.4byte	0x0
+ 1437 0034 00000000 		.4byte	0x0
+ 1438              		.section	.debug_ranges,"",%progbits
+ 1439              	.Ldebug_ranges0:
+ 1440 0000 00000000 		.4byte	.Ltext0
+ 1441 0004 00000000 		.4byte	.Letext0
+ 1442 0008 00000000 		.4byte	.LFB29
+ 1443 000c E8000000 		.4byte	.LFE29
+ 1444 0010 00000000 		.4byte	.LFB30
+ 1445 0014 22010000 		.4byte	.LFE30
+ 1446 0018 00000000 		.4byte	.LFB31
+ 1447 001c F0030000 		.4byte	.LFE31
+ 1448 0020 00000000 		.4byte	.LFB32
+ 1449 0024 EC000000 		.4byte	.LFE32
+ 1450 0028 00000000 		.4byte	0x0
+ 1451 002c 00000000 		.4byte	0x0
+ 1452              		.section	.debug_str,"MS",%progbits,1
+ 1453              	.LASF6:
+ 1454 0000 6C6F6E67 		.ascii	"long long int\000"
+ 1454      206C6F6E 
+ 1454      6720696E 
+ 1454      7400
+ 1455              	.LASF18:
+ 1456 000e 43616C63 		.ascii	"Calc_Degs\000"
+ 1456      5F446567 
+ 1456      7300
+ 1457              	.LASF15:
+ 1458 0018 636F756E 		.ascii	"count\000"
+ 1458      7400
+ 1459              	.LASF23:
+ 1460 001e 73616D70 		.ascii	"sample\000"
+ 1460      6C6500
+ 1461              	.LASF11:
+ 1462 0025 666C6F61 		.ascii	"float\000"
+ 1462      7400
+ 1463              	.LASF1:
+ 1464 002b 756E7369 		.ascii	"unsigned char\000"
+ 1464      676E6564 
+ 1464      20636861 
+ 1464      7200
+ 1465              	.LASF25:
+ 1466 0039 2E5C6D61 		.ascii	".\\main.c\000"
+ 1466      696E2E63 
+ 1466      00
+ 1467              	.LASF5:
+ 1468 0042 6C6F6E67 		.ascii	"long unsigned int\000"
+ 1468      20756E73 
+ARM GAS  C:\Users\Chrispy\AppData\Local\Temp\cci7J7Xo.s 			page 30
+
+
+ 1468      69676E65 
+ 1468      6420696E 
+ 1468      7400
+ 1469              	.LASF3:
+ 1470 0054 73686F72 		.ascii	"short unsigned int\000"
+ 1470      7420756E 
+ 1470      7369676E 
+ 1470      65642069 
+ 1470      6E7400
+ 1471              	.LASF20:
+ 1472 0067 49544D5F 		.ascii	"ITM_RxBuffer\000"
+ 1472      52784275 
+ 1472      66666572 
+ 1472      00
+ 1473              	.LASF26:
+ 1474 0074 433A5C55 		.ascii	"C:\\Users\\Chrispy\\Documents\\PSoC Creator\\FinalP"
+ 1474      73657273 
+ 1474      5C436872 
+ 1474      69737079 
+ 1474      5C446F63 
+ 1475 00a2 726F6A65 		.ascii	"rojectSave\\FinalProject.cydsn\000"
+ 1475      63745361 
+ 1475      76655C46 
+ 1475      696E616C 
+ 1475      50726F6A 
+ 1476              	.LASF12:
+ 1477 00c0 646F7562 		.ascii	"double\000"
+ 1477      6C6500
+ 1478              	.LASF19:
+ 1479 00c7 4F757470 		.ascii	"Output_Data\000"
+ 1479      75745F44 
+ 1479      61746100 
+ 1480              	.LASF10:
+ 1481 00d3 75696E74 		.ascii	"uint16\000"
+ 1481      313600
+ 1482              	.LASF27:
+ 1483 00da 6D61696E 		.ascii	"main\000"
+ 1483      00
+ 1484              	.LASF8:
+ 1485 00df 756E7369 		.ascii	"unsigned int\000"
+ 1485      676E6564 
+ 1485      20696E74 
+ 1485      00
+ 1486              	.LASF21:
+ 1487 00ec 636F756E 		.ascii	"counts\000"
+ 1487      747300
+ 1488              	.LASF7:
+ 1489 00f3 6C6F6E67 		.ascii	"long long unsigned int\000"
+ 1489      206C6F6E 
+ 1489      6720756E 
+ 1489      7369676E 
+ 1489      65642069 
+ 1490              	.LASF28:
+ 1491 010a 4765745F 		.ascii	"Get_Counts\000"
+ 1491      436F756E 
+ 1491      747300
+ 1492              	.LASF22:
+ARM GAS  C:\Users\Chrispy\AppData\Local\Temp\cci7J7Xo.s 			page 31
+
+
+ 1493 0115 6368616E 		.ascii	"chan\000"
+ 1493      00
+ 1494              	.LASF17:
+ 1495 011a 64696666 		.ascii	"diff\000"
+ 1495      00
+ 1496              	.LASF24:
+ 1497 011f 474E5520 		.ascii	"GNU C 4.4.1\000"
+ 1497      4320342E 
+ 1497      342E3100 
+ 1498              	.LASF13:
+ 1499 012b 63686172 		.ascii	"char\000"
+ 1499      00
+ 1500              	.LASF2:
+ 1501 0130 73686F72 		.ascii	"short int\000"
+ 1501      7420696E 
+ 1501      7400
+ 1502              	.LASF9:
+ 1503 013a 75696E74 		.ascii	"uint8\000"
+ 1503      3800
+ 1504              	.LASF4:
+ 1505 0140 6C6F6E67 		.ascii	"long int\000"
+ 1505      20696E74 
+ 1505      00
+ 1506              	.LASF14:
+ 1507 0149 6C6F6E67 		.ascii	"long double\000"
+ 1507      20646F75 
+ 1507      626C6500 
+ 1508              	.LASF0:
+ 1509 0155 7369676E 		.ascii	"signed char\000"
+ 1509      65642063 
+ 1509      68617200 
+ 1510              	.LASF16:
+ 1511 0161 64656773 		.ascii	"degs\000"
+ 1511      00
+ 1512              		.ident	"GCC: (Sourcery G++ Lite 2010q1-188) 4.4.1"
